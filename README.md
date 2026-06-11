@@ -45,7 +45,8 @@ SELECT * FROM table_name;
 📌 Example:
 
 SELECT * FROM students;
-
+[images/day1-1.png]
+[images/day1-2.jpeg]
 
 
 ⭐ Summary
