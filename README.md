@@ -6,7 +6,7 @@ This document contains basic SQL commands I learned while starting my SQL journe
 
 ---
 
-## 🟢 1. CREATE TABLE
+## 1. CREATE TABLE
 
 Used to create a new table in a database.
 
@@ -24,22 +24,27 @@ CREATE TABLE students (
     name VARCHAR(50),
     age INT
 );
+
+```
+
 🟡 2. INSERT INTO
 
 Used to insert data into a table.
 
+```sql
 📌 Syntax:
 INSERT INTO table_name (column1, column2, column3)
 VALUES (value1, value2, value3);
 📌 Example:
 INSERT INTO students (id, name, age)
 VALUES (1, 'Jiya', 20);
-
+```
 
 🔵 3. SELECT
 
 Used to retrieve data from a table.
 
+```sql
 📌 Syntax to view the created table:
 SELECT * FROM table_name;
 📌 Example:
@@ -47,12 +52,9 @@ SELECT * FROM table_name;
 SELECT * FROM students;
 [images/day1-1.png]
 [images/day1-2.jpeg]
-
+```
 
 ⭐ Summary
 CREATE → Create a new table
 INSERT → Add data into table
 SELECT → Retrieve data from table
-
-
-```
