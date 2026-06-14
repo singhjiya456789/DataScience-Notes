@@ -52,9 +52,6 @@ SELECT * FROM table_name;
 SELECT * FROM students;
 ```
 
-![images/day1-1.png]
-![images/day1-2.jpeg]
-
 ⭐ Summary
 CREATE → Create a new table
 INSERT → Add data into table
@@ -278,3 +275,226 @@ FROM employees;
   - `AVG()`
   - `MIN()`
   - `MAX()`
+
+m
+
+## Day 3: CASE, GROUP BY, HAVING, and Subqueries
+
+---
+
+# 1. CASE Statement
+
+The `CASE` statement is used to add conditional logic in SQL. It works like an IF-ELSE statement in programming.
+
+### Syntax
+
+```sql
+SELECT column_name,
+       CASE
+           WHEN condition1 THEN result1
+           WHEN condition2 THEN result2
+           ELSE result
+       END AS alias_name
+FROM table_name;
+```
+
+### Example
+
+```sql
+SELECT employee_name,
+       salary,
+       CASE
+           WHEN salary >= 70000 THEN 'High Salary'
+           WHEN salary >= 40000 THEN 'Medium Salary'
+           ELSE 'Low Salary'
+       END AS salary_category
+FROM employees;
+```
+
+### Use Cases
+
+- Categorizing data
+- Creating custom labels
+- Conditional calculations
+
+---
+
+# 2. GROUP BY Clause
+
+The `GROUP BY` clause is used to group rows that have the same values into summary rows.
+
+### Syntax
+
+```sql
+SELECT column_name,
+       aggregate_function(column_name)
+FROM table_name
+GROUP BY column_name;
+```
+
+### Example
+
+```sql
+SELECT department,
+       COUNT(*) AS total_employees
+FROM employees
+GROUP BY department;
+```
+
+### Output Example
+
+| Department | Total Employees |
+| ---------- | --------------- |
+| HR         | 5               |
+| IT         | 10              |
+| Sales      | 7               |
+
+### Common Aggregate Functions
+
+```sql
+COUNT()
+SUM()
+AVG()
+MIN()
+MAX()
+```
+
+---
+
+# 3. HAVING Clause
+
+The `HAVING` clause is used to filter grouped data after applying `GROUP BY`.
+
+### Difference Between WHERE and HAVING
+
+| WHERE                          | HAVING                        |
+| ------------------------------ | ----------------------------- |
+| Filters rows before grouping   | Filters groups after grouping |
+| Cannot use aggregate functions | Can use aggregate functions   |
+
+### Syntax
+
+```sql
+SELECT column_name,
+       aggregate_function(column_name)
+FROM table_name
+GROUP BY column_name
+HAVING condition;
+```
+
+### Example
+
+```sql
+SELECT department,
+       COUNT(*) AS total_employees
+FROM employees
+GROUP BY department
+HAVING COUNT(*) > 5;
+```
+
+### Result
+
+Only departments having more than 5 employees will be displayed.
+
+---
+
+# 4. Subqueries
+
+A subquery is a query inside another query.
+
+### Syntax
+
+```sql
+SELECT column_name
+FROM table_name
+WHERE column_name OPERATOR
+(
+    SELECT column_name
+    FROM another_table
+);
+```
+
+### Example 1: Salary Above Average
+
+```sql
+SELECT employee_name, salary
+FROM employees
+WHERE salary >
+(
+    SELECT AVG(salary)
+    FROM employees
+);
+```
+
+### Example 2: Maximum Salary
+
+```sql
+SELECT employee_name, salary
+FROM employees
+WHERE salary =
+(
+    SELECT MAX(salary)
+    FROM employees
+);
+```
+
+### Types of Subqueries
+
+#### 1. Single Row Subquery
+
+Returns one value.
+
+```sql
+SELECT *
+FROM employees
+WHERE salary >
+(
+    SELECT AVG(salary)
+    FROM employees
+);
+```
+
+#### 2. Multiple Row Subquery
+
+Returns multiple values.
+
+```sql
+SELECT *
+FROM employees
+WHERE department_id IN
+(
+    SELECT department_id
+    FROM departments
+);
+```
+
+#### 3. Correlated Subquery
+
+Runs once for every row processed by the outer query.
+
+```sql
+SELECT employee_name, salary
+FROM employees e
+WHERE salary >
+(
+    SELECT AVG(salary)
+    FROM employees
+    WHERE department = e.department
+);
+```
+
+---
+
+# Key Takeaways
+
+✅ Learned how to use CASE statements for conditional logic
+
+✅ Understood how GROUP BY creates summary data
+
+✅ Used HAVING to filter grouped records
+
+✅ Learned how subqueries allow one query to use the result of another query
+
+✅ Practiced combining aggregate functions with grouping and filtering
+
+---
