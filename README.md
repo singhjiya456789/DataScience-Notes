@@ -276,225 +276,143 @@ FROM employees;
   - `MIN()`
   - `MAX()`
 
-m
+# Day 4: SQL JOINS + GROUP BY + HAVING + AGGREGATES
 
-## Day 3: CASE, GROUP BY, HAVING, and Subqueries
+## 1. Introduction to JOINS
 
----
+Joins are used to combine data from two or more tables based on a related column (primary key–foreign key relationship).
 
-# 1. CASE Statement
+Example Relationship
+Customers → customer_id
+Orders → customer_id
 
-The `CASE` statement is used to add conditional logic in SQL. It works like an IF-ELSE statement in programming.
+# 2. INNER JOIN
 
-### Syntax
+Returns only matching records from both tables.
 
-```sql
-SELECT column_name,
-       CASE
-           WHEN condition1 THEN result1
-           WHEN condition2 THEN result2
-           ELSE result
-       END AS alias_name
-FROM table_name;
-```
-
-### Example
+- Syntax
 
 ```sql
-SELECT employee_name,
-       salary,
-       CASE
-           WHEN salary >= 70000 THEN 'High Salary'
-           WHEN salary >= 40000 THEN 'Medium Salary'
-           ELSE 'Low Salary'
-       END AS salary_category
-FROM employees;
+SELECT columns
+FROM table1
+INNER JOIN table2
+ON table1.common_column = table2.common_column;
 ```
 
-### Use Cases
-
-- Categorizing data
-- Creating custom labels
-- Conditional calculations
-
----
-
-# 2. GROUP BY Clause
-
-The `GROUP BY` clause is used to group rows that have the same values into summary rows.
-
-### Syntax
+Example
 
 ```sql
-SELECT column_name,
-       aggregate_function(column_name)
-FROM table_name
-GROUP BY column_name;
+SELECT c.name, o.order_id, o.amount
+FROM Customers c
+INNER JOIN Orders o
+ON c.customer_id = o.customer_id;
 ```
 
-### Example
+## 3. LEFT JOIN
+
+Returns all records from left table + matching records from right table.
+
+Example
 
 ```sql
-SELECT department,
-       COUNT(*) AS total_employees
-FROM employees
-GROUP BY department;
+SELECT c.name, o.order_id, o.amount
+FROM Customers c
+LEFT JOIN Orders o
+ON c.customer_id = o.customer_id;
 ```
 
-### Output Example
+## 4. RIGHT JOIN
 
-| Department | Total Employees |
-| ---------- | --------------- |
-| HR         | 5               |
-| IT         | 10              |
-| Sales      | 7               |
+Returns all records from right table + matching from left table.
 
-### Common Aggregate Functions
+Example
 
 ```sql
-COUNT()
-SUM()
-AVG()
-MIN()
-MAX()
+SELECT c.name, o.order_id, o.amount
+FROM Customers c
+RIGHT JOIN Orders o
+ON c.customer_id = o.customer_id;
 ```
 
----
+# 5. FULL OUTER JOIN
 
-# 3. HAVING Clause
+Returns all records from both tables.
 
-The `HAVING` clause is used to filter grouped data after applying `GROUP BY`.
-
-### Difference Between WHERE and HAVING
-
-| WHERE                          | HAVING                        |
-| ------------------------------ | ----------------------------- |
-| Filters rows before grouping   | Filters groups after grouping |
-| Cannot use aggregate functions | Can use aggregate functions   |
-
-### Syntax
+Example
 
 ```sql
-SELECT column_name,
-       aggregate_function(column_name)
-FROM table_name
-GROUP BY column_name
-HAVING condition;
+SELECT c.name, o.order_id, o.amount
+FROM Customers c
+FULL OUTER JOIN Orders o
+ON c.customer_id = o.customer_id;
 ```
 
-### Example
+# 6. CROSS JOIN
+
+Returns all possible combinations of rows.
+
+Example
 
 ```sql
-SELECT department,
-       COUNT(*) AS total_employees
-FROM employees
-GROUP BY department
-HAVING COUNT(*) > 5;
+SELECT c.name, o.order_id
+FROM Customers c
+CROSS JOIN Orders o;
 ```
 
-### Result
+# 7. GROUP BY with JOINS
 
-Only departments having more than 5 employees will be displayed.
+Used to group data after combining tables.
 
----
-
-# 4. Subqueries
-
-A subquery is a query inside another query.
-
-### Syntax
+Example: Count Orders per Customer
 
 ```sql
-SELECT column_name
-FROM table_name
-WHERE column_name OPERATOR
-(
-    SELECT column_name
-    FROM another_table
-);
+SELECT c.name, COUNT(o.order_id) AS total_orders
+FROM Customers c
+INNER JOIN Orders o
+ON c.customer_id = o.customer_id
+GROUP BY c.name;
+
+Example: Total Spending per Customer
+SELECT c.name, SUM(o.amount) AS total_spent
+FROM Customers c
+INNER JOIN Orders o
+ON c.customer_id = o.customer_id
+GROUP BY c.name;
 ```
 
-### Example 1: Salary Above Average
+# 8. HAVING Clause with JOINS
+
+Used to filter grouped results.
+
+Example: Customers with more than 1 order
 
 ```sql
-SELECT employee_name, salary
-FROM employees
-WHERE salary >
-(
-    SELECT AVG(salary)
-    FROM employees
-);
+SELECT c.name, COUNT(o.order_id) AS total_orders
+FROM Customers c
+INNER JOIN Orders o
+ON c.customer_id = o.customer_id
+GROUP BY c.name
+HAVING COUNT(o.order_id) > 1;
 ```
 
-### Example 2: Maximum Salary
+# 9. AGGREGATE FUNCTIONS WITH JOINS
 
 ```sql
-SELECT employee_name, salary
-FROM employees
-WHERE salary =
-(
-    SELECT MAX(salary)
-    FROM employees
-);
+COUNT
+COUNT(o.order_id)
+SUM
+SUM(o.amount)
+AVG
+AVG(o.amount)
+MIN / MAX
+MIN(o.amount)
+MAX(o.amount)
 ```
 
-### Types of Subqueries
+## Key Takeaways
 
-#### 1. Single Row Subquery
-
-Returns one value.
-
-```sql
-SELECT *
-FROM employees
-WHERE salary >
-(
-    SELECT AVG(salary)
-    FROM employees
-);
-```
-
-#### 2. Multiple Row Subquery
-
-Returns multiple values.
-
-```sql
-SELECT *
-FROM employees
-WHERE department_id IN
-(
-    SELECT department_id
-    FROM departments
-);
-```
-
-#### 3. Correlated Subquery
-
-Runs once for every row processed by the outer query.
-
-```sql
-SELECT employee_name, salary
-FROM employees e
-WHERE salary >
-(
-    SELECT AVG(salary)
-    FROM employees
-    WHERE department = e.department
-);
-```
-
----
-
-# Key Takeaways
-
-✅ Learned how to use CASE statements for conditional logic
-
-✅ Understood how GROUP BY creates summary data
-
-✅ Used HAVING to filter grouped records
-
-✅ Learned how subqueries allow one query to use the result of another query
-
-✅ Practiced combining aggregate functions with grouping and filtering
-
----
+✅ Learned all major types of SQL JOINs
+✅ Understood how tables are connected using keys
+✅ Practiced GROUP BY with joins
+✅ Used HAVING to filter grouped results
+✅ Applied aggregate functions (COUNT, SUM, AVG) with real data
