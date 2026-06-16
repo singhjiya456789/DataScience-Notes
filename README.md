@@ -416,3 +416,101 @@ MAX(o.amount)
 ✅ Practiced GROUP BY with joins
 ✅ Used HAVING to filter grouped results
 ✅ Applied aggregate functions (COUNT, SUM, AVG) with real data
+
+# 📘 SQL Learning Journey - Day 5
+
+## 🚀 What I Learned Today
+
+Today, I continued strengthening my understanding of SQL JOINs and explored two important SQL concepts:
+
+### 🔗 JOIN Practice
+
+- Practiced INNER JOIN queries
+- Solved customer-order analysis problems
+- Used JOINs with aggregate functions like COUNT() and SUM()
+- Worked on GROUP BY and HAVING with JOINs
+
+### 📝 CASE WHEN
+
+CASE WHEN is SQL's way of writing **conditional logic** — similar to if/else in Python.
+
+Example:
+
+```sql
+SELECT customer_name,
+       CASE
+           WHEN amount >= 1000 THEN 'High Value'
+           WHEN amount >= 500 THEN 'Medium Value'
+           ELSE 'Low Value'
+       END AS category
+FROM Orders;
+```
+
+### Subqueries
+
+A subquery is a query **nested inside another query**. It can appear in the SELECT, FROM, or WHERE clause.
+Learned how to write queries inside other queries to solve more complex problems.
+
+Example:
+
+```sql
+SELECT customer_name
+FROM Customers
+WHERE customer_id IN (
+    SELECT customer_id
+    FROM Orders
+    WHERE amount > 1000
+);
+```
+
+### Subquery in WHERE Clause
+
+Find employees who earn more than the average salary.
+
+```sql
+SELECT name, salary
+FROM employees
+WHERE salary > (
+    SELECT AVG(salary)
+    FROM employees
+);
+```
+
+### Subquery in FROM Clause (Derived Table) Treat a subquery as a temporary table.
+
+```sql
+SELECT
+    dept_summary.department_name,
+    dept_summary.avg_salary
+FROM (
+    SELECT
+        departments.department_name,
+        AVG(employees.salary) AS avg_salary
+    FROM employees
+    INNER JOIN departments
+        ON employees.department_id = departments.id
+    GROUP BY departments.department_name
+) AS dept_summary
+WHERE dept_summary.avg_salary > 60000;
+```
+
+**What I learned:** Wrapping a query in FROM (...) creates a "derived table" — it's like a temporary view. This is a powerful pattern for multi-step analysis and will be useful when writing complex analytical queries.
+
+### Subquery in SELECT Clause Add a calculated column based on a separate aggregation.
+
+```sql
+SELECT
+    name,
+    salary,
+    (SELECT AVG(salary) FROM employees) AS company_avg
+FROM employees;
+```
+
+**What I learned:** This is useful for side-by-side comparisons — seeing each employee's salary against the company average in the same row.
+
+# 🎯 Skills Gained
+
+Better understanding of table relationships using JOINs
+Applying conditional logic with CASE WHEN
+Retrieving data using nested queries (Subqueries)
+Solving real-world SQL analysis problems
