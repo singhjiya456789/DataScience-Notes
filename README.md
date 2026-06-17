@@ -1,6 +1,7 @@
 # 📘 SQL Basic Commands (MySQL Notes)
 
-This document contains basic SQL commands I learned while starting my SQL journey.
+> A personal log of my SQL practice and learning.
+> This document contains basic SQL commands I learned while starting my SQL journey.
 
 ## DAY 01
 
@@ -514,3 +515,259 @@ Better understanding of table relationships using JOINs
 Applying conditional logic with CASE WHEN
 Retrieving data using nested queries (Subqueries)
 Solving real-world SQL analysis problems
+
+# 📘 SQL Learning Journey – Day 6: Common Table Expressions (CTEs)
+
+# 🚀 What I Learned Today
+
+Today, I learned about **Common Table Expressions (CTEs)**, a feature that helps write cleaner and more readable SQL queries.
+
+CTEs allow complex queries to be broken into smaller logical steps, making them easier to understand, debug, and maintain.
+
+---
+
+# 📝 Common Table Expressions (CTEs)
+
+A CTE is a temporary named result set created using the `WITH` keyword.
+
+### Syntax
+
+```sql
+WITH cte_name AS (
+    SELECT column_name
+    FROM table_name
+)
+SELECT *
+FROM cte_name;
+```
+
+---
+
+# 🔄 Subquery vs CTE
+
+### Using a Subquery
+
+```sql
+SELECT name, salary
+FROM (
+    SELECT name, salary
+    FROM employees
+    WHERE department = 'IT'
+) AS it_employees
+WHERE salary > 50000;
+```
+
+### Using a CTE
+
+```sql
+WITH it_employees AS (
+    SELECT name, salary
+    FROM employees
+    WHERE department = 'IT'
+)
+SELECT name, salary
+FROM it_employees
+WHERE salary > 50000;
+```
+
+### Key Takeaway
+
+- Both queries produce the same result.
+- CTEs improve readability.
+- CTEs are easier to maintain when queries become complex.
+
+---
+
+# 🔗 Multiple CTEs
+
+Multiple CTEs can be chained together.
+
+```sql
+WITH dept_count AS (
+    SELECT department,
+           COUNT(*) AS total_emp
+    FROM employees
+    GROUP BY department
+),
+large_depts AS (
+    SELECT department,
+           total_emp
+    FROM dept_count
+    WHERE total_emp > 2
+)
+SELECT *
+FROM large_depts;
+```
+
+### What I Learned
+
+- One CTE can use another CTE.
+- Complex logic can be divided into multiple steps.
+- Queries become easier to understand.
+
+---
+
+# 🔁 Recursive CTEs
+
+Recursive CTEs reference themselves and are useful for hierarchical data.
+
+Examples:
+
+- Employee-manager relationships
+- Organization charts
+- Category trees
+- Folder structures
+
+```sql
+WITH RECURSIVE org_chart AS (
+    SELECT id,
+           name,
+           manager_id,
+           1 AS level
+    FROM employees
+    WHERE manager_id IS NULL
+
+    UNION ALL
+
+    SELECT e.id,
+           e.name,
+           e.manager_id,
+           oc.level + 1
+    FROM employees e
+    JOIN org_chart oc
+      ON e.manager_id = oc.id
+)
+SELECT *
+FROM org_chart;
+```
+
+### How It Works
+
+1. Finds the top-level employee.
+2. Finds employees reporting to them.
+3. Repeats the process.
+4. Stops when no more rows are found.
+
+---
+
+# 💡 Important Concepts Learned
+
+## Filtering Aggregated Results
+
+```sql
+WITH dept_summary AS (
+    SELECT department,
+           COUNT(*) AS total_emp
+    FROM employees
+    GROUP BY department
+)
+SELECT *
+FROM dept_summary
+WHERE total_emp > 2;
+```
+
+---
+
+## COUNT Variations
+
+```sql
+COUNT(*)            -- Counts all rows
+COUNT(emp_id)       -- Counts non-null emp_id values
+COUNT(department)   -- Ignores NULL departments
+```
+
+### Key Learning
+
+Use the appropriate COUNT function depending on what you want to measure.
+
+---
+
+## One Row Per What?
+
+Whenever using `GROUP BY`, ask:
+
+> "One row per WHAT?"
+
+The answer determines the grouping column.
+
+Example:
+
+```sql
+SELECT department,
+       COUNT(*) AS total_emp
+FROM employees
+GROUP BY department;
+```
+
+One row per **department**.
+
+---
+
+## Joining Back to Original Table
+
+```sql
+WITH first_hired AS (
+    SELECT department,
+           MIN(emp_id) AS min_emp_id
+    FROM employees
+    GROUP BY department
+)
+SELECT e.emp_id,
+       e.emp_name,
+       e.department
+FROM employees e
+JOIN first_hired f
+  ON e.emp_id = f.min_emp_id
+ AND e.department = f.department;
+```
+
+### Why?
+
+The CTE finds the required IDs, and the JOIN retrieves complete employee details.
+
+---
+
+## UNION ALL vs JOIN
+
+| Feature               | JOIN           | UNION ALL           |
+| --------------------- | -------------- | ------------------- |
+| Combines              | Columns        | Rows                |
+| Requires matching key | Yes            | No                  |
+| Use Case              | Related tables | Similar result sets |
+
+### Example
+
+```sql
+-- JOIN
+SELECT *
+FROM employees e
+JOIN departments d
+ON e.department = d.department;
+```
+
+```sql
+-- UNION ALL
+SELECT name
+FROM employees
+
+UNION ALL
+
+SELECT name
+FROM managers;
+```
+
+---
+
+# 🎯 Skills Gained
+
+- Creating and using CTEs
+- Converting subqueries into CTEs
+- Chaining multiple CTEs
+- Understanding recursive CTEs
+- Working with hierarchical data
+- Using COUNT functions correctly
+- Joining CTE results back to source tables
+- Understanding UNION ALL vs JOIN
+- Writing cleaner and more maintainable SQL
+
+---
