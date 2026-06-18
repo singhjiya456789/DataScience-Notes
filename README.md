@@ -897,15 +897,15 @@ FROM Employees;
 
 # 🛠 Skills Practiced
 
-ROW_NUMBER()
-RANK()
-DENSE_RANK()
-SUM() OVER()
-AVG() OVER()
-MAX() OVER()
-LAG()
-LEAD()
-PARTITION BY
-ORDER BY in Window Functions
+- ROW_NUMBER()
+- RANK()
+- DENSE_RANK()
+- SUM() OVER()
+- AVG() OVER()
+- MAX() OVER()
+- LAG()
+- LEAD()
+- PARTITION BY
+- ORDER BY in Window Functions
 
 ---
