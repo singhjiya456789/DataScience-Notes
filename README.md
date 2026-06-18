@@ -771,3 +771,141 @@ FROM managers;
 - Writing cleaner and more maintainable SQL
 
 ---
+
+# 📘Day 7: Window Functions
+
+## 🚀 What I Learned Today
+
+Today, I learned about **Window Functions** in SQL. Window functions perform calculations across a set of rows related to the current row without grouping the results into a single row.
+
+Unlike `GROUP BY`, window functions allow us to retain individual row details while performing aggregate calculations.
+
+---
+
+## 📝 Window Functions
+
+A window function uses the `OVER()` clause to define the set of rows (window) on which the function operates.
+
+### Basic Syntax
+
+```sql
+SELECT column_name,
+       window_function() OVER (
+           PARTITION BY column_name
+           ORDER BY column_name
+       )
+FROM table_name;
+```
+
+📌 Concepts Covered
+
+# 1. ROW_NUMBER()
+
+Assigns a unique sequential number to each row.
+
+```sql
+SELECT emp_name,
+       salary,
+       ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_num
+FROM Employees;
+```
+
+# 2. RANK()
+
+Assigns ranks to rows. Duplicate values receive the same rank, and gaps may occur.
+
+```sql
+SELECT emp_name,
+       salary,
+       RANK() OVER (ORDER BY salary DESC) AS emp_rank
+FROM Employees;
+```
+
+# 3. DENSE_RANK()
+
+Similar to RANK(), but without gaps in ranking.
+
+```sql
+SELECT emp_name,
+       salary,
+       DENSE_RANK() OVER (ORDER BY salary DESC) AS dense_rank
+FROM Employees;
+```
+
+# 4. SUM() OVER()
+
+Calculates running totals or totals without grouping rows.
+
+```sql
+SELECT emp_name,
+       salary,
+       SUM(salary) OVER () AS total_salary
+FROM Employees;
+```
+
+# 5. AVG() OVER()
+
+Calculates averages while keeping all rows visible.
+
+```sql
+SELECT emp_name,
+       salary,
+       AVG(salary) OVER (PARTITION BY department) AS dept_avg
+FROM Employees;
+```
+
+# 6. MAX() OVER()
+
+Finds the maximum value within a partition.
+
+```sql
+SELECT emp_name,
+       department,
+       MAX(salary) OVER (PARTITION BY department) AS max_salary
+FROM Employees;
+```
+
+# 7. LAG()
+
+Accesses the previous row's value.
+
+```sql
+SELECT emp_name,
+       salary,
+       LAG(salary) OVER (ORDER BY salary) AS previous_salary
+FROM Employees;
+```
+
+# 8. LEAD()
+
+Accesses the next row's value.
+
+```sql
+SELECT emp_name,
+       salary,
+       LEAD(salary) OVER (ORDER BY salary) AS next_salary
+FROM Employees;
+```
+
+# 📚 Key Takeaways
+
+- Window functions do not collapse rows like GROUP BY.
+- PARTITION BY divides data into groups.
+- ORDER BY defines row order within a window.
+- Useful for ranking, running totals, comparisons, and analytics.
+- Commonly used in Data Analyst and Data Science roles.
+
+# 🛠 Skills Practiced
+
+ROW_NUMBER()
+RANK()
+DENSE_RANK()
+SUM() OVER()
+AVG() OVER()
+MAX() OVER()
+LAG()
+LEAD()
+PARTITION BY
+ORDER BY in Window Functions
+
+---
